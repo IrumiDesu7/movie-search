@@ -1,5 +1,11 @@
+import { MovieDashboard } from "@/components/movie-dashboard";
+
 function App() {
-  return <main>This is the main part</main>;
+  return (
+    <main className="min-h-screen bg-background">
+      <MovieDashboard />
+    </main>
+  );
 }
 
 export default App;
