@@ -1,13 +1,28 @@
 import { SearchIcon } from "lucide-react";
 import { Input } from "@/components/ui/input";
+import { useState, useEffect } from "react";
 
 interface MovieSearchProps {
   onSearch: (query: string) => void;
+  debounceTime?: number;
 }
 
-export function MovieSearch({ onSearch }: MovieSearchProps) {
+export function MovieSearch({
+  onSearch,
+  debounceTime = 500,
+}: MovieSearchProps) {
+  const [searchTerm, setSearchTerm] = useState("");
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      onSearch(searchTerm);
+    }, debounceTime);
+
+    return () => clearTimeout(timer);
+  }, [searchTerm, onSearch, debounceTime]);
+
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
-    onSearch(e.target.value);
+    setSearchTerm(e.target.value);
   };
 
   return (
@@ -19,6 +34,7 @@ export function MovieSearch({ onSearch }: MovieSearchProps) {
           placeholder="Search movies..."
           className="w-full pl-10 pr-4"
           onChange={handleSearch}
+          value={searchTerm}
         />
       </div>
     </div>
