@@ -1,0 +1,52 @@
+---
+description:
+globs:
+alwaysApply: false
+---
+# Shadcn Components Usage Guidelines
+
+## Overview
+This rule defines the guidelines for using shadcn components in the project. Shadcn components should be the preferred choice for UI elements when available.
+
+## Rules
+
+1. **Component Selection**
+   - Always prefer shadcn components over custom components when available
+   - Check the existing shadcn componentns before implementing custom components
+   - Use the component documentation as the source of truth for implementation
+
+2. **Component Installation**
+   - DO NOT attempt to install shadcn components automatically
+   - If a required shadcn component is not installed:
+     1. Notify the user that the component needs to be installed
+     2. Provide the exact CLI command for installation
+     3. Wait for user confirmation before proceeding
+     4. Example installation command format: `pnpm dlx shadcn@latest add [component-name]`
+
+3. **Component Usage**
+   - Follow shadcn's recommended patterns and best practices
+   - Use the component's TypeScript types and props as defined in the documentation
+   - Maintain consistent styling by using the project's theme configuration
+
+4. **Customization**
+   - Customize shadcn components through the theme configuration when possible
+   - Avoid direct style overrides unless absolutely necessary
+   - Document any customizations made to the base components
+
+## Examples
+
+### Correct Usage
+```tsx
+import { Button } from "@/components/ui/button"
+
+export function ButtonDemo() {
+  return <Button>Button</Button>
+}
+
+```
+
+### Component Installation Request
+When a component is needed but not installed:
+1. Inform the user: "The [component-name] component from shadcn is required but not installed."
+2. Provide the installation command: `pnpm dlx shadcn@latest add [component-name]`
+3. Wait for user confirmation before proceeding with implementation
