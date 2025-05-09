@@ -203,7 +203,7 @@ export function MovieDashboard() {
           {totalPages > 1 && (
             <Pagination
               currentPage={currentPage}
-              totalPages={totalPages}
+              totalPages={Math.min(500, totalPages)}
               onPageChange={handlePageChange}
             />
           )}
