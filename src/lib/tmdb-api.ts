@@ -16,10 +16,10 @@ export function getApiKey(): string {
     return env.VITE_TMDB_API_KEY;
   } catch {
     console.error(
-      "❌ API key not found. Please add your TMDB API key to .env file"
+      "❌ API key not found. Please add your TMDB API key to .env file",
     );
     throw new Error(
-      "Missing TMDB API key. Add VITE_TMDB_API_KEY to your .env file"
+      "Missing TMDB API key. Add VITE_TMDB_API_KEY to your .env file",
     );
   }
 }
@@ -45,7 +45,7 @@ export const posterSizes = {
 // Get full image URL
 export function getPosterUrl(
   path: string | null,
-  size = posterSizes.medium
+  size = posterSizes.medium,
 ): string {
   if (!path) return "https://via.placeholder.com/300x450?text=No+Poster";
   return `${API_IMAGE_BASE_URL}/${size}${path}`;
@@ -89,7 +89,7 @@ export const tmdbApi = {
     }
 
     const url = `${API_BASE_URL}/search/movie?query=${encodeURIComponent(
-      query
+      query,
     )}&page=${page}`;
     const response = await fetch(url, REQUEST_OPTIONS);
 
