@@ -1,3 +1,8 @@
+import { MovieDetailsDialog } from "@/components/movie-details-dialog";
+import { MovieFilters } from "@/components/movie-filters";
+import { MoviePagination } from "@/components/movie-pagination";
+import { MovieSearch } from "@/components/movie-search";
+import { MovieCardSkeleton } from "@/components/movie-skeletons";
 import {
   Card,
   CardContent,
@@ -13,13 +18,7 @@ import {
 } from "@/lib/hooks/use-movies";
 import { getPosterUrl } from "@/lib/tmdb-api";
 import { ChevronDown, Info, Star } from "lucide-react";
-import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
-import { MovieDetailsDialog } from "./movie-details-dialog";
-import { MovieFilters } from "./movie-filters";
-import { MoviePagination } from "./movie-pagination";
-import { MovieSearch } from "./movie-search";
-import { MovieCardSkeleton } from "./movie-skeletons";
 
 export function MovieDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -52,6 +51,7 @@ export function MovieDashboard() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
   const handleMovieSelect = (id: number) => {
@@ -96,67 +96,44 @@ export function MovieDashboard() {
         </div>
 
         <div className="w-full overflow-hidden rounded-lg border">
-          <motion.button
+          <button
             onClick={toggleFilters}
-            className="bg-background flex w-full items-center justify-between p-4 text-left font-medium"
-            whileHover={{ backgroundColor: "rgba(0,0,0,0.025)" }}
-            whileTap={{ backgroundColor: "rgba(0,0,0,0.05)" }}
+            className="bg-background hover:bg-opacity-50 active:bg-opacity-75 flex w-full items-center justify-between p-4 text-left font-medium"
           >
             <span>Filters</span>
-            <motion.div
-              animate={{ rotate: showFilters ? 180 : 0 }}
-              transition={{ duration: 0.3 }}
+            <div
+              className="transform transition-transform duration-300"
+              style={{
+                transform: showFilters ? "rotate(180deg)" : "rotate(0deg)",
+              }}
             >
               <ChevronDown className="h-5 w-5" />
-            </motion.div>
-          </motion.button>
+            </div>
+          </button>
 
-          <AnimatePresence initial={false}>
-            {showFilters && (
-              <motion.div
-                initial={{ height: 0, opacity: 0 }}
-                animate={{
-                  height: "auto",
-                  opacity: 1,
-                  transition: {
-                    height: { duration: 0.3 },
-                    opacity: { duration: 0.3, delay: 0.1 },
-                  },
-                }}
-                exit={{
-                  height: 0,
-                  opacity: 0,
-                  transition: {
-                    height: { duration: 0.3 },
-                    opacity: { duration: 0.2 },
-                  },
-                }}
-                className="overflow-hidden"
-              >
-                <MovieFilters
-                  minYear={minYear}
-                  maxYear={maxYear}
-                  minRating={minRating}
-                  onYearRangeChange={handleYearRangeChange}
-                  onRatingChange={setMinRating}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {showFilters && (
+            <div className="overflow-hidden">
+              <MovieFilters
+                minYear={minYear}
+                maxYear={maxYear}
+                minRating={minRating}
+                onYearRangeChange={handleYearRangeChange}
+                onRatingChange={setMinRating}
+              />
+            </div>
+          )}
         </div>
       </div>
 
       {isLoading ? (
         <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
           {[...Array(10)].map((_, index) => (
-            <motion.div
+            <div
               key={`skeleton-${index}`}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ duration: 0.3 }}
+              className="opacity-100 transition-opacity duration-300"
             >
               <MovieCardSkeleton />
-            </motion.div>
+            </div>
           ))}
         </div>
       ) : filteredMovies.length === 0 ? (
@@ -167,64 +144,53 @@ export function MovieDashboard() {
         </div>
       ) : (
         <>
-          <motion.div
-            className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
-            layout
-            transition={{ type: "inertia", stiffness: 200, damping: 25 }}
-          >
-            <AnimatePresence>
-              {filteredMovies.map((movie) => (
-                <motion.div
-                  key={movie.id}
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3 }}
-                  whileHover={{ scale: 1.01 }}
-                  layout
-                >
-                  <Card className="h-full overflow-hidden">
-                    <div className="relative aspect-[2/3]">
-                      <img
-                        src={getPosterUrl(movie.poster_path, "w342")}
-                        alt={movie.title}
-                        className="h-full w-full object-cover"
+          <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+            {filteredMovies.map((movie) => (
+              <div
+                key={movie.id}
+                className="transition-transform duration-300 hover:scale-[1.01]"
+              >
+                <Card className="h-full overflow-hidden">
+                  <div className="relative aspect-[2/3]">
+                    <img
+                      src={getPosterUrl(movie.poster_path, "w342")}
+                      alt={movie.title}
+                      className="h-full w-full object-cover"
+                    />
+                  </div>
+                  <CardHeader className="p-3">
+                    <CardTitle className="text-base">{movie.title}</CardTitle>
+                    <CardDescription>
+                      {formatYear(movie.release_date)}
+                    </CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-3 pt-0">
+                    <p className="text-muted-foreground line-clamp-2 text-xs">
+                      {movie.overview}
+                    </p>
+                  </CardContent>
+                  <CardFooter className="flex justify-between p-3">
+                    <div className="flex items-center">
+                      <Star
+                        className="mr-1 h-4 w-4 text-yellow-500"
+                        fill="currentColor"
                       />
+                      <span className="text-sm">
+                        {movie.vote_average.toFixed(1)}
+                      </span>
                     </div>
-                    <CardHeader className="p-3">
-                      <CardTitle className="text-base">{movie.title}</CardTitle>
-                      <CardDescription>
-                        {formatYear(movie.release_date)}
-                      </CardDescription>
-                    </CardHeader>
-                    <CardContent className="p-3 pt-0">
-                      <p className="text-muted-foreground line-clamp-2 text-xs">
-                        {movie.overview}
-                      </p>
-                    </CardContent>
-                    <CardFooter className="flex justify-between p-3">
-                      <div className="flex items-center">
-                        <Star
-                          className="mr-1 h-4 w-4 text-yellow-500"
-                          fill="currentColor"
-                        />
-                        <span className="text-sm">
-                          {movie.vote_average.toFixed(1)}
-                        </span>
-                      </div>
-                      <button
-                        className="flex items-center gap-1 text-xs text-blue-600 hover:underline"
-                        onClick={() => handleMovieSelect(movie.id)}
-                      >
-                        <Info className="h-3 w-3" />
-                        Details
-                      </button>
-                    </CardFooter>
-                  </Card>
-                </motion.div>
-              ))}
-            </AnimatePresence>
-          </motion.div>
+                    <button
+                      className="flex items-center gap-1 text-xs text-blue-600 hover:underline"
+                      onClick={() => handleMovieSelect(movie.id)}
+                    >
+                      <Info className="h-3 w-3" />
+                      Details
+                    </button>
+                  </CardFooter>
+                </Card>
+              </div>
+            ))}
+          </div>
 
           <MoviePagination
             currentPage={currentPage}
