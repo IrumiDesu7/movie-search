@@ -7,32 +7,19 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
-import {
-  Pagination,
-  PaginationContent,
-  PaginationEllipsis,
-  PaginationItem,
-  PaginationLink,
-  PaginationNext,
-  PaginationPrevious,
-} from "@/components/ui/pagination";
-import {
   useMovieDetails,
   useMovieSearch,
   usePopularMovies,
 } from "@/lib/hooks/use-movies";
 import { getPosterUrl } from "@/lib/tmdb-api";
-import { Calendar, ChevronDown, Info, Star } from "lucide-react";
+import { ChevronDown, Info, Star } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import { useState } from "react";
+import { MovieDetailsDialog } from "./movie-details-dialog";
 import { MovieFilters } from "./movie-filters";
+import { MoviePagination } from "./movie-pagination";
 import { MovieSearch } from "./movie-search";
+import { MovieCardSkeleton } from "./movie-skeletons";
 
 export function MovieDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
@@ -89,15 +76,6 @@ export function MovieDashboard() {
   const formatYear = (dateString: string) => {
     if (!dateString) return "Unknown";
     return new Date(dateString).getFullYear();
-  };
-
-  const formatDate = (dateString: string) => {
-    if (!dateString) return "Unknown";
-    return new Date(dateString).toLocaleDateString("en-US", {
-      year: "numeric",
-      month: "long",
-      day: "numeric",
-    });
   };
 
   const toggleFilters = () => {
@@ -169,8 +147,17 @@ export function MovieDashboard() {
       </div>
 
       {isLoading ? (
-        <div className="py-12 text-center">
-          <p className="text-xl text-gray-500">Loading movies...</p>
+        <div className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5">
+          {[...Array(10)].map((_, index) => (
+            <motion.div
+              key={`skeleton-${index}`}
+              initial={{ opacity: 0, scale: 0.9 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.3 }}
+            >
+              <MovieCardSkeleton />
+            </motion.div>
+          ))}
         </div>
       ) : filteredMovies.length === 0 ? (
         <div className="py-12 text-center">
@@ -239,213 +226,20 @@ export function MovieDashboard() {
             </AnimatePresence>
           </motion.div>
 
-          {totalPages > 1 && (
-            <div className="my-6">
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious
-                      onClick={
-                        currentPage > 1
-                          ? () => handlePageChange(currentPage - 1)
-                          : undefined
-                      }
-                      className={
-                        currentPage === 1
-                          ? "pointer-events-none opacity-50"
-                          : ""
-                      }
-                    />
-                  </PaginationItem>
-
-                  {/* First page */}
-                  {currentPage > 3 && (
-                    <>
-                      <PaginationItem>
-                        <PaginationLink onClick={() => handlePageChange(1)}>
-                          1
-                        </PaginationLink>
-                      </PaginationItem>
-                      <PaginationItem>
-                        <PaginationEllipsis />
-                      </PaginationItem>
-                    </>
-                  )}
-
-                  {/* Page numbers */}
-                  {[...Array(Math.min(5, totalPages))].map((_, i) => {
-                    // Calculate the page number to display
-                    let pageNum;
-                    if (totalPages <= 5) {
-                      // If we have 5 or fewer pages, show all pages
-                      pageNum = i + 1;
-                    } else if (currentPage <= 3) {
-                      // If we're near the beginning, show pages 1-5
-                      pageNum = i + 1;
-                    } else if (currentPage >= totalPages - 2) {
-                      // If we're near the end, show the last 5 pages
-                      pageNum = totalPages - 4 + i;
-                    } else {
-                      // Otherwise show 2 pages before and 2 pages after current page
-                      pageNum = currentPage - 2 + i;
-                    }
-
-                    return (
-                      <PaginationItem key={pageNum}>
-                        <PaginationLink
-                          isActive={pageNum === currentPage}
-                          onClick={() => handlePageChange(pageNum)}
-                        >
-                          {pageNum}
-                        </PaginationLink>
-                      </PaginationItem>
-                    );
-                  })}
-
-                  {/* Last page ellipsis */}
-                  {currentPage < totalPages - 2 && totalPages > 5 && (
-                    <>
-                      <PaginationItem>
-                        <PaginationEllipsis />
-                      </PaginationItem>
-                      <PaginationItem>
-                        <PaginationLink
-                          onClick={() => handlePageChange(totalPages)}
-                        >
-                          {totalPages}
-                        </PaginationLink>
-                      </PaginationItem>
-                    </>
-                  )}
-
-                  <PaginationItem>
-                    <PaginationNext
-                      onClick={
-                        currentPage < totalPages
-                          ? () => handlePageChange(currentPage + 1)
-                          : undefined
-                      }
-                      className={
-                        currentPage === totalPages
-                          ? "pointer-events-none opacity-50"
-                          : ""
-                      }
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-            </div>
-          )}
+          <MoviePagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={handlePageChange}
+          />
         </>
       )}
 
-      {/* Movie Details Dialog */}
-      <Dialog open={selectedMovieId !== null} onOpenChange={handleCloseDetails}>
-        <DialogContent className="max-w-4xl">
-          {isDetailsLoading ? (
-            <div className="py-10 text-center">
-              <p>Loading movie details...</p>
-            </div>
-          ) : movieDetails ? (
-            <>
-              <DialogHeader className="mb-4">
-                <DialogTitle className="text-3xl font-bold">
-                  {movieDetails.title}
-                </DialogTitle>
-                <DialogDescription className="mt-2 flex flex-wrap items-center gap-4">
-                  <div className="flex items-center">
-                    <Star
-                      className="mr-1 h-5 w-5 text-yellow-500"
-                      fill="currentColor"
-                    />
-                    <span className="font-medium">
-                      {movieDetails.vote_average.toFixed(1)}
-                    </span>
-                  </div>
-                  <div className="flex items-center">
-                    <Calendar className="mr-1 h-5 w-5 text-gray-500" />
-                    <span>{formatDate(movieDetails.release_date)}</span>
-                  </div>
-                </DialogDescription>
-              </DialogHeader>
-
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-[1fr_2fr]">
-                <div className="flex flex-col gap-4">
-                  <div className="aspect-[2/3] overflow-hidden rounded-lg shadow-md">
-                    <img
-                      src={getPosterUrl(movieDetails.poster_path, "w342")}
-                      alt={movieDetails.title}
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                  <Card>
-                    <CardHeader className="p-4 pb-2">
-                      <CardTitle className="text-base">Quick Info</CardTitle>
-                    </CardHeader>
-                    <CardContent className="grid gap-2 p-4 pt-0 text-sm">
-                      <div>
-                        <span className="font-medium">Release Year:</span>
-                        <p className="text-gray-600">
-                          {formatYear(movieDetails.release_date)}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">Rating:</span>
-                        <p className="text-gray-600">
-                          {movieDetails.vote_average.toFixed(1)} / 10
-                        </p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-
-                <div className="flex flex-col gap-4">
-                  <Card className="flex-1">
-                    <CardHeader className="p-4 pb-2">
-                      <CardTitle className="text-base">Overview</CardTitle>
-                    </CardHeader>
-                    <CardContent className="p-4 pt-0">
-                      <p className="text-gray-700">{movieDetails.overview}</p>
-                    </CardContent>
-                  </Card>
-
-                  <Card>
-                    <CardHeader className="p-4 pb-2">
-                      <CardTitle className="text-base">Details</CardTitle>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-2 gap-x-4 gap-y-2 p-4 pt-0 text-sm">
-                      <div>
-                        <span className="font-medium">Movie ID:</span>
-                        <p className="text-gray-600">{movieDetails.id}</p>
-                      </div>
-                      <div>
-                        <span className="font-medium">Release Date:</span>
-                        <p className="text-gray-600">
-                          {formatDate(movieDetails.release_date)}
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">Vote Average:</span>
-                        <p className="text-gray-600">
-                          {movieDetails.vote_average.toFixed(1)} / 10
-                        </p>
-                      </div>
-                      <div>
-                        <span className="font-medium">Title:</span>
-                        <p className="text-gray-600">{movieDetails.title}</p>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </div>
-              </div>
-            </>
-          ) : (
-            <div className="py-10 text-center">
-              <p>No movie details available</p>
-            </div>
-          )}
-        </DialogContent>
-      </Dialog>
+      <MovieDetailsDialog
+        isOpen={selectedMovieId !== null}
+        onClose={handleCloseDetails}
+        movieDetails={movieDetails}
+        isLoading={isDetailsLoading}
+      />
     </div>
   );
 }
