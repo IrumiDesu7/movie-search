@@ -17,16 +17,15 @@ import { Pagination } from "./ui/pagination";
 
 export function MovieDashboard() {
   const [searchQuery, setSearchQuery] = useState("");
-  const [minYear, setMinYear] = useState(1900);
-  const [maxYear, setMaxYear] = useState(2099);
+  const [minYear, setMinYear] = useState(1950);
+  const [maxYear, setMaxYear] = useState(2025);
   const [minRating, setMinRating] = useState(0);
   const [currentPage, setCurrentPage] = useState(1);
   const [showFilters, setShowFilters] = useState(false);
 
-  // Use the appropriate query based on whether we're searching or not
   const { data: searchData, isLoading: isSearchLoading } = useMovieSearch(
     searchQuery,
-    currentPage
+    currentPage,
   );
   const { data: popularData, isLoading: isPopularLoading } =
     usePopularMovies(currentPage);
@@ -69,10 +68,10 @@ export function MovieDashboard() {
 
   return (
     <div className="container mx-auto py-8">
-      <h1 className="text-3xl font-bold mb-6">Movie Dashboard</h1>
+      <h1 className="mb-6 text-3xl font-bold">Movie Dashboard</h1>
 
       <div className="mb-6">
-        <div className="w-full mb-4">
+        <div className="mb-4 w-full">
           <MovieSearch
             onSearch={(query) => {
               setSearchQuery(query);
@@ -80,10 +79,10 @@ export function MovieDashboard() {
           />
         </div>
 
-        <div className="w-full border rounded-lg overflow-hidden">
+        <div className="w-full overflow-hidden rounded-lg border">
           <motion.button
             onClick={toggleFilters}
-            className="w-full p-4 bg-background flex items-center justify-between font-medium text-left"
+            className="bg-background flex w-full items-center justify-between p-4 text-left font-medium"
             whileHover={{ backgroundColor: "rgba(0,0,0,0.025)" }}
             whileTap={{ backgroundColor: "rgba(0,0,0,0.05)" }}
           >
@@ -118,15 +117,13 @@ export function MovieDashboard() {
                 }}
                 className="overflow-hidden"
               >
-                <div className="px-4 pb-4">
-                  <MovieFilters
-                    minYear={minYear}
-                    maxYear={maxYear}
-                    minRating={minRating}
-                    onYearRangeChange={handleYearRangeChange}
-                    onRatingChange={setMinRating}
-                  />
-                </div>
+                <MovieFilters
+                  minYear={minYear}
+                  maxYear={maxYear}
+                  minRating={minRating}
+                  onYearRangeChange={handleYearRangeChange}
+                  onRatingChange={setMinRating}
+                />
               </motion.div>
             )}
           </AnimatePresence>
@@ -134,11 +131,11 @@ export function MovieDashboard() {
       </div>
 
       {isLoading ? (
-        <div className="text-center py-12">
+        <div className="py-12 text-center">
           <p className="text-xl text-gray-500">Loading movies...</p>
         </div>
       ) : filteredMovies.length === 0 ? (
-        <div className="text-center py-12">
+        <div className="py-12 text-center">
           <p className="text-xl text-gray-500">
             No movies found matching your criteria
           </p>
@@ -146,9 +143,9 @@ export function MovieDashboard() {
       ) : (
         <>
           <motion.div
-            className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4"
+            className="grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5"
             layout
-            transition={{ type: "spring", stiffness: 200, damping: 25 }}
+            transition={{ type: "inertia", stiffness: 200, damping: 25 }}
           >
             <AnimatePresence>
               {filteredMovies.map((movie) => (
@@ -161,12 +158,12 @@ export function MovieDashboard() {
                   whileHover={{ scale: 1.03 }}
                   layout
                 >
-                  <Card className="overflow-hidden h-full">
-                    <div className="aspect-[2/3] relative">
+                  <Card className="h-full overflow-hidden">
+                    <div className="relative aspect-[2/3]">
                       <img
                         src={getPosterUrl(movie.poster_path, "w342")}
                         alt={movie.title}
-                        className="object-cover w-full h-full"
+                        className="h-full w-full object-cover"
                       />
                     </div>
                     <CardHeader className="p-3">
@@ -176,14 +173,14 @@ export function MovieDashboard() {
                       </CardDescription>
                     </CardHeader>
                     <CardContent className="p-3 pt-0">
-                      <p className="text-xs text-muted-foreground line-clamp-2">
+                      <p className="text-muted-foreground line-clamp-2 text-xs">
                         {movie.overview}
                       </p>
                     </CardContent>
                     <CardFooter className="flex justify-between p-3">
                       <div className="flex items-center">
                         <Star
-                          className="w-4 h-4 text-yellow-500 mr-1"
+                          className="mr-1 h-4 w-4 text-yellow-500"
                           fill="currentColor"
                         />
                         <span className="text-sm">

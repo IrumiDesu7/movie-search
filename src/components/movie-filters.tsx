@@ -28,11 +28,11 @@ export function MovieFilters({
   };
 
   return (
-    <div className="mb-6 p-4 border rounded-lg space-y-4">
+    <div className="my-2 space-y-4 rounded-lg p-4">
       <h2 className="text-lg font-medium">Filters</h2>
 
       <div>
-        <h3 className="text-sm font-medium mb-2">Release Year</h3>
+        <h3 className="mb-2 text-sm font-medium">Release Year</h3>
         <div className="grid grid-cols-2 gap-4">
           <div className="space-y-2">
             <Label htmlFor="min-year" className="text-xs text-gray-500">
@@ -66,7 +66,7 @@ export function MovieFilters({
       </div>
 
       <div>
-        <h3 className="text-sm font-medium mb-2">
+        <h3 className="mb-2 text-sm font-medium">
           Minimum Rating: {minRating.toFixed(1)}
         </h3>
         <Slider
@@ -77,7 +77,7 @@ export function MovieFilters({
           onValueChange={(values) => onRatingChange(values[0])}
           className="my-4"
         />
-        <div className="flex justify-between text-xs text-gray-500 mt-1">
+        <div className="mt-1 flex justify-between text-xs text-gray-500">
           <span>0</span>
           <span>5</span>
           <span>10</span>
