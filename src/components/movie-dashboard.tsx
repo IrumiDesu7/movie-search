@@ -180,7 +180,7 @@ export function MovieDashboard() {
                   animate={{ opacity: 1, scale: 1 }}
                   exit={{ opacity: 0, scale: 0.9 }}
                   transition={{ duration: 0.3 }}
-                  whileHover={{ scale: 1.03 }}
+                  whileHover={{ scale: 1.01 }}
                   layout
                 >
                   <Card className="h-full overflow-hidden">
