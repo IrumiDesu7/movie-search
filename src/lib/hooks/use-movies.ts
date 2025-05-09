@@ -20,5 +20,6 @@ export function useMovieDetails(id: number) {
   return useQuery({
     queryKey: ["movieDetails", id],
     queryFn: () => tmdbApi.getMovieDetails(id),
+    enabled: id !== 0,
   });
 }
