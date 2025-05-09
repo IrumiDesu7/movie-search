@@ -117,4 +117,13 @@
   body {
     @apply bg-background text-foreground;
   }
+  button {
+    @apply cursor-pointer disabled:cursor-not-allowed;
+    &.loading {
+      @apply cursor-wait;
+    }
+    &.draggable {
+      @apply cursor-grab active:cursor-grabbing;
+    }
+  }
 }
