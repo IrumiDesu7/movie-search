@@ -81,13 +81,13 @@ export function MovieDetailsDialog({
                   <CardContent className="grid gap-2 p-4 pt-0 text-sm">
                     <div>
                       <span className="font-medium">Release Year:</span>
-                      <p className="text-gray-600">
+                      <p className="text-gray-600 dark:text-gray-400">
                         {formatYear(movieDetails.release_date)}
                       </p>
                     </div>
                     <div>
                       <span className="font-medium">Rating:</span>
-                      <p className="text-gray-600">
+                      <p className="text-gray-600 dark:text-gray-400">
                         {movieDetails.vote_average.toFixed(1)} / 10
                       </p>
                     </div>
@@ -101,7 +101,9 @@ export function MovieDetailsDialog({
                     <CardTitle className="text-base">Overview</CardTitle>
                   </CardHeader>
                   <CardContent className="p-4 pt-0">
-                    <p className="text-gray-700">{movieDetails.overview}</p>
+                    <p className="text-gray-700 dark:text-gray-300">
+                      {movieDetails.overview}
+                    </p>
                   </CardContent>
                 </Card>
 
@@ -112,23 +114,27 @@ export function MovieDetailsDialog({
                   <CardContent className="grid grid-cols-2 gap-x-4 gap-y-2 p-4 pt-0 text-sm">
                     <div>
                       <span className="font-medium">Movie ID:</span>
-                      <p className="text-gray-600">{movieDetails.id}</p>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        {movieDetails.id}
+                      </p>
                     </div>
                     <div>
                       <span className="font-medium">Release Date:</span>
-                      <p className="text-gray-600">
+                      <p className="text-gray-600 dark:text-gray-400">
                         {formatDate(movieDetails.release_date)}
                       </p>
                     </div>
                     <div>
                       <span className="font-medium">Vote Average:</span>
-                      <p className="text-gray-600">
+                      <p className="text-gray-600 dark:text-gray-400">
                         {movieDetails.vote_average.toFixed(1)} / 10
                       </p>
                     </div>
                     <div>
                       <span className="font-medium">Title:</span>
-                      <p className="text-gray-600">{movieDetails.title}</p>
+                      <p className="text-gray-600 dark:text-gray-400">
+                        {movieDetails.title}
+                      </p>
                     </div>
                   </CardContent>
                 </Card>
