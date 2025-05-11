@@ -24,6 +24,27 @@ pnpm install
 pnpm dev
 ```
 
+## Pagination Feature
+
+The application includes a sophisticated pagination system for browsing through movie results:
+
+### Features
+
+- Navigate between pages of movie results
+- Previous and Next buttons for easy navigation
+- Smart page number display that shows:
+  - Current page highlighted
+  - Always shows first and last page when possible
+  - Shows ellipsis (...) for skipped page ranges
+  - Displays up to 5 page numbers at once
+- Automatically scrolls to the top when changing pages
+- Handles both search results and popular movies listing
+- Pagination is hidden when only one page of results exists
+
+### Implementation
+
+The pagination component is fully responsive and accessible, with proper ARIA labels for screen readers. It smartly adjusts its display based on the current position within the total result set, ensuring users always have context of where they are in the results.
+
 ## React + TypeScript + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
